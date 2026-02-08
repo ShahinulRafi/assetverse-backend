@@ -58,7 +58,15 @@ async function run() {
       console.log('Asset info added:', result);
     })
 
-    
+    app.get('/manager/assets/:email', async(req, res) => {
+      const email = req.params.email;
+
+      const query = {managerEmail : email};
+      const result = await assetsCollection.find(query).toArray();
+      console.log('Manager assets fetched:', result);
+      res.send(result);
+    })
+
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
