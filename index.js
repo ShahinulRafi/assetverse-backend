@@ -29,16 +29,36 @@ async function run() {
     const database = client.db('assetverse');
 
     const userCollection = database.collection('user');
+    const assetsCollection = database.collection('assets');
 
     app.post('/users', async(req, res)=> {
       const userInfo = req.body;
-      userInfo.role = 'user';
       userInfo.createdAt = new Date();
       const result = await userCollection.insertOne(userInfo);
       res.send(result);
       console.log('User info added:', result);
     })
 
+    app.get('/user/role/:email', async(req, res) => {
+      const email = req.params.email;
+
+      const query = {email : email};
+      const result = await userCollection.findOne(query);
+      console.log('User role fetched:', result);
+      res.send(result);
+    })
+
+    //Assets
+
+    app.post('/assets', async(req, res) => {
+      const data = req.body;
+      data.createdAt = new Date();
+      const result = await assetsCollection.insertOne(data);
+      res.send(result);
+      console.log('Asset info added:', result);
+    })
+
+    
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
